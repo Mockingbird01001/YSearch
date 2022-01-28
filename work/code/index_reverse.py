@@ -119,5 +119,5 @@ class Indexeur_inverse:
         reversIndexTF = self.calculenormalizedTFdico(reversIndexDF) # calcul le TF * IDF normalisé dans le fichier
         return index, reversIndexTF
     
-# if __name__ == "__main__":
-#     print(Indexeur_inverse().genereIndexTF()[0])
+if __name__ == "__main__":
+    print(Indexeur_inverse().genereIndexTF()[1])

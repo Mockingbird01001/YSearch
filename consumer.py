@@ -41,7 +41,7 @@ class Consumer:
                                  bootstrap_servers = self.server,
                                  auto_offset_reset='earliest',
                                  enable_auto_commit=True,
-                                 group_id='my-group-reverse',
+                                 group_id='my-group-reverse_add_file',
                                  value_deserializer=lambda x: loads(x.decode('utf-8-sig')),
                                  api_version=(2,0,2))
         
@@ -52,13 +52,12 @@ class Consumer:
         """
         Sauve le dico sous forme d'un fichier  racine doc:freq (freq ou tf selon le dico input)
         """
-        line = {'word': message_value[0],'text':[]}
-        data = message_value[1]
-        for x in data.keys():
+        line = {'word':list(message_value.keys())[0],'text':[]}
+        for x in message_value[line['word']]:
             if x != 'df':
-                 line["text"].append({"name": x, "tf": data[x]})
+                line["text"].append({"name": x,'tf' : message_value[line['word']][x]})
             else : 
-                line["df"]= data[x]
+                 line["df"]= message_value[line['word']][x]
         return line
             
 
@@ -82,8 +81,10 @@ class Consumer:
         """
         for message in self.consumer_index:
             data = self.save_index_to_mongo(message.value) # formater les data provenant du producer
-            self.bdd.index_collection.insert_one(data) # inserer dans mongo
-       
+            try:
+                self.bdd.index_collection.insert_one(data) # inserer dans mongo
+            except:
+                print("error on insert !")
             
     def consume_loop_reverse(self):
         """
@@ -91,9 +92,12 @@ class Consumer:
         """
         for message in self.consumer_reverse:
             print(message.value)
+            print("**************")
             data = self.save_reverse_index_to_mongo(message.value) # formater les data provenant du producer
-            self.bdd.reverse_index_collection.insert_one(data) # inserer dans mongo
-            
+            try:
+                self.bdd.reverse_index_collection.insert_one(data) # inserer dans mongo
+            except:
+                print("error on insert !")
             
     def consume_loop_reverse_update_add(self):
         for message in self.consu_reverse_add:

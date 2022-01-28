@@ -57,12 +57,15 @@ class QueryRanking:
         """
         recherche les documents ou les mots de la recheche apparaissent
         """
-        results = self.bdd.reverse_index_collection.aggregate([
-            { '$unwind': { 'path': '$text' } }, 
-            { '$match': { 'word': {'$in': query} } },
-            { '$project': { '_id': 0, 'word': 0} },
-            { '$sort': { 'tf_idf': 1 } }
-        ])
+        try:
+            results = self.bdd.reverse_index_collection.aggregate([
+                { '$unwind': { 'path': '$text' } }, 
+                { '$match': { 'word': {'$in': query} } },
+                { '$project': { '_id': 0, 'word': 0} },
+                { '$sort': { 'tf_idf': 1 } }
+            ])
+        except:
+            print("error on search !")
         return list(results)
    
     
@@ -70,13 +73,17 @@ class QueryRanking:
         """
         caclul le nombre de documents
         """
-        count_index = self.bdd.index_collection.aggregate([
-            { '$group': { '_id': 'null', 'myCount': { '$sum': 1 } } },
-            { '$project': { '_id': 0 } }
-        ])
-        for count in count_index:
-            return count["myCount"]
-        
+        try:
+            count_index = self.bdd.index_collection.aggregate([
+                { '$group': { '_id': 'null', 'myCount': { '$sum': 1 } } },
+                { '$project': { '_id': 0 } }
+            ])
+            for count in count_index:
+                return count["myCount"]
+        except:
+            print("error on search !")
+            
+            
     def count_words(self):
         """
         caclul le nombre de mots present au total
@@ -92,8 +99,11 @@ class QueryRanking:
         """
         retourne tous les resultats de la base
         """
-        return self.bdd.reverse_index_collection.find({}, {"_id": 0})
-        
+        try:
+            result = self.bdd.reverse_index_collection.find({}, {"_id": 0})
+        except:
+            print("error on find !")
+        return result
 
     def bm25_idf(self, results):
        """
@@ -102,7 +112,8 @@ class QueryRanking:
        scored_results = {}
        for doc in results:
            df = doc['df']
-           scored_results[doc['text']['name']] =  doc['text']['tf'] * np.log10((self.count_docs() - df + 0.5) / (df + 0.5) +1)
+           idf = doc['text']['tf'] * np.log10((self.count_docs() - df + 0.5) / (df + 0.5) +1)
+           scored_results[doc['text']['name']] =  idf
        return scored_results
        
     

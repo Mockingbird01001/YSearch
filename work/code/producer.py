@@ -12,7 +12,7 @@ import index_reverse, config, add_file_indexor
 class Producer:
     
     def __init__(self):
-        # config.Config() # import des configurations
+        config.Config() # import des configurations
         self.indexor = index_reverse.Indexeur_inverse()
         self.server = ['kafka:9093']
         self.topic_index   = "index"
@@ -31,13 +31,12 @@ class Producer:
     def indexProducer(self):
         for doc in self.data_index.items():
             self.producer.send(self.topic_index, value=doc)
-        print("sended ok")
+            print("sended ok")
         return
     
     
     def reverseProducer(self):
         for doc in self.data_reverse.items():
-            print(doc)
             self.producer.send(self.topic_reverse, value=doc)
         print("sended ok")
         return
@@ -46,14 +45,16 @@ class Producer:
     def add_file_index(self, data_index_add):
         for doc in data_index_add.items():
             self.producer.send(self.topic_index, value=doc)
-        print("sended ok")
+            print("sended ok")
+        return
             
-            
+    
     def add_file_reverse(self, data_reverse_add):
         for doc in data_reverse_add.items():
             self.producer.send(self.topic_reverse_add_file, value=doc)
-        print("sended --add ok")
-            
+            print("sended --add ok")
+        return
+    
     
     def init_addFile(self):
         print("waiting for files...")
@@ -61,6 +62,7 @@ class Producer:
             # creation des threads
             add_file = add_file_indexor.Add_file_indexor()
             data_index_add, data_reverse_add = add_file.reverse_index()
+            
             if data_index_add and data_reverse_add:
                 index_producer   = Thread(target=self.add_file_index, args=(data_index_add, ))
                 reverse_producer = Thread(target=self.add_file_reverse, args=(data_reverse_add, ))
@@ -91,6 +93,8 @@ class Producer:
         reverse_producer.join()
         print("sending end.")
         
+        self.init_addFile()
+        
         
     def shutdown(self):
         self.run = False
@@ -99,7 +103,5 @@ class Producer:
 if __name__ == "__main__":
     # Demarrage du producer envoie des data dans le consumer
     print("indexation...")
-    producer = Producer()
-    producer.runProducer()
-    producer.init_addFile()
+    Producer().runProducer()
     
