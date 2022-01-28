@@ -1,0 +1,14 @@
+Package            Version
+------------------ ---------
+click              8.0.3
+importlib-metadata 4.8.3
+joblib             1.1.0
+kafka-python       2.0.2
+nltk               3.6.7
+pip                21.3.1
+regex              2022.1.18
+setuptools         44.1.1
+supertools         1.0.1
+tqdm               4.62.3
+typing_extensions  4.0.1
+zipp               3.6.0
