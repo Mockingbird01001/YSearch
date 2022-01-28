@@ -31,7 +31,7 @@ class Producer:
     def indexProducer(self):
         for doc in self.data_index.items():
             self.producer.send(self.topic_index, value=doc)
-            print("sended ok")
+        print("sended ok")
         return
     
     
@@ -45,16 +45,16 @@ class Producer:
     def add_file_index(self, data_index_add):
         for doc in data_index_add.items():
             self.producer.send(self.topic_index, value=doc)
-            print("sended ok")
+        print("sended ok")
         return
             
     
     def add_file_reverse(self, data_reverse_add):
         for doc in data_reverse_add.items():
             self.producer.send(self.topic_reverse_add_file, value=doc)
-            print("sended --add ok")
+        print("sended --add ok")
         return
-    
+  
     
     def init_addFile(self):
         print("waiting for files...")
@@ -104,4 +104,3 @@ if __name__ == "__main__":
     # Demarrage du producer envoie des data dans le consumer
     print("indexation...")
     Producer().runProducer()
-    

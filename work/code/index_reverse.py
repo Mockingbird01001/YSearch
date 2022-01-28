@@ -57,7 +57,7 @@ class Indexeur_inverse:
                 listeStem.append(word_root)
             listeStem = self.filter_general(listeStem) # filtrage
             dicoDocs[filename] = self.outils.liste2dico(listeStem) #construction du dictionnaire mot --> fréquence et ajout dans dico final
-            self.outils.list2file(loadedFile_liste, "old_file.txt")
+        self.outils.list2file(loadedFile_liste, "old_file.txt")
         return dicoDocs
     
     

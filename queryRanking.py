@@ -133,9 +133,12 @@ class QueryRanking:
         fait la recherche -> calcul IDF -> trie les resultats et calcule le temps de toute l'opération [ main() ]
         """
         t_start = time.time_ns()
-        list_query = self.search(string)
+        list_query = self.string2list_root(string)
         reverse = self.finder_reverse(list_query)
         results = self.bm25_idf(reverse)
         sorted_10_results = self.sort_ranked(results) 
         t_end = (time.time_ns() - t_start)/1000000000
-        return sorted_10_results, t_end
+        return sorted_10_results[0: 10], t_end
+    
+# if __name__ == '__main__':
+#     print(QueryRanking().start())

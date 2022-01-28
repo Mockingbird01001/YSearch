@@ -17,6 +17,7 @@ class Mongo_Config:
             
             # creation de la base de donnée
             self.mydb = self.myclient["Projet_Gutenberg"]
+            # self.mydb = self.myclient["test"]
             
             # creer les collecions [index, reverse_index]
             self.reverse_index_collection = self.mydb["reverse_index"]

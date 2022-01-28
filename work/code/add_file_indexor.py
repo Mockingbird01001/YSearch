@@ -8,14 +8,15 @@ Created on Thu Jan 27 21:00:33 2022
 
 from itertools import filterfalse
 from os import listdir
-import outils, index_reverse
+import index_reverse
 
 class Add_file_indexor:
     
     def __init__(self):
         self.index = index_reverse.Indexeur_inverse()
         self.NBDOCS = len(listdir(self.index.outils.DOSSIERDOCUMENTS)) # nombre de document dans le HDFS
-        # identifie les nouveau fichiers ajouté        
+        # identifie les nouveau fichiers ajouté   
+        self.new_files = list(filterfalse(self.index.outils.loadFile2List("old_file.txt").__contains__, listdir(self.index.outils.DOSSIERDOCUMENTS)))
         
     def docs2dicoDoc(self):
         """
@@ -24,9 +25,9 @@ class Add_file_indexor:
         dicoDocs = {} # initialisation du dictionnaire
         loadedFile_liste = [] # initalisation de la liste des nouveau fichiers indexé
         # parcours des fichiers du répertoire DOSSIERDOCUMENT, à l'aide de la focntion listdir du module os
-        new_files = list(filterfalse(self.index.outils.loadFile2List("old_file.txt").__contains__, listdir(self.index.outils.DOSSIERDOCUMENTS)))
-        for filename in new_files:
+        for filename in self.new_files:
             loadedFile_liste.append(filename)
+            print(filename)
             try:
                 filecontent = self.index.outils.loadFile_UTF8(filename) # ouverture du fichier en UTF-8 - sig with BOW (bag-of-words)
             except:
@@ -39,7 +40,7 @@ class Add_file_indexor:
                 listeStem.append(word_root)
             listeStem = self.index.filter_general(listeStem) # filtrage
             dicoDocs[filename] = self.index.outils.liste2dico(listeStem) #construction du dictionnaire mot --> fréquence et ajout dans dico final
-            self.index.outils.list2file(loadedFile_liste, "old_file.txt")
+        self.index.outils.list2file(loadedFile_liste, "old_file.txt")
         return dicoDocs
     
     

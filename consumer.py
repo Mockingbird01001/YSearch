@@ -21,7 +21,7 @@ class Consumer:
         self.consumer_index = KafkaConsumer(
                                  self.topic_index,
                                  bootstrap_servers = self.server,
-                                 auto_offset_reset='earliest',
+                                 # auto_offset_reset='earliest',
                                  enable_auto_commit=True,
                                  group_id='my-group-index',
                                  value_deserializer=lambda x: loads(x.decode('utf-8-sig')),
@@ -30,7 +30,7 @@ class Consumer:
         self.consumer_reverse = KafkaConsumer(
                                  self.topic_reverse,
                                  bootstrap_servers = self.server,
-                                 auto_offset_reset='earliest',
+                                 # auto_offset_reset='earliest',
                                  enable_auto_commit=True,
                                  group_id='my-group-reverse',
                                  value_deserializer=lambda x: loads(x.decode('utf-8-sig')),
@@ -39,7 +39,7 @@ class Consumer:
         self.consu_reverse_add = KafkaConsumer(
                                  self.topic_reverse_add_file,
                                  bootstrap_servers = self.server,
-                                 auto_offset_reset='earliest',
+                                 # auto_offset_reset='earliest',
                                  enable_auto_commit=True,
                                  group_id='my-group-reverse_add_file',
                                  value_deserializer=lambda x: loads(x.decode('utf-8-sig')),
@@ -52,12 +52,13 @@ class Consumer:
         """
         Sauve le dico sous forme d'un fichier  racine doc:freq (freq ou tf selon le dico input)
         """
-        line = {'word':list(message_value.keys())[0],'text':[]}
-        for x in message_value[line['word']]:
+        line = {'word': message_value[0],'text':[]}
+        data = message_value[1]
+        for x in data.keys():
             if x != 'df':
-                line["text"].append({"name": x,'tf' : message_value[line['word']][x]})
+                 line["text"].append({"name": x, "tf": data[x]})
             else : 
-                 line["df"]= message_value[line['word']][x]
+                line["df"]= data[x]
         return line
             
 
